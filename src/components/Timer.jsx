@@ -9,6 +9,8 @@ import sfxUrl from "../assets/audio/nakime_biwa.m4a";
 export default function Timer({
   modeIndex,
   durations,
+  running,
+  setRunning,
   onNext,
   onRestartRequest,
   musicRef,
@@ -16,7 +18,6 @@ export default function Timer({
   musicVolume,
 }) {
   const [seconds, setSeconds] = useState(durations[modeIndex]);
-  const [running, setRunning] = useState(false);
   const tickRef = useRef(null);
 
   useEffect(() => {
@@ -35,9 +36,8 @@ export default function Timer({
       durations[modeIndex]
     );
     setSeconds(durations[modeIndex]);
-    setRunning(false);
   }, [modeIndex, durations]);
-  
+
   useEffect(() => {
     if (running) {
       console.log("[Timer] start interval");
@@ -51,14 +51,12 @@ export default function Timer({
           return s - 1;
         });
       }, 1000);
-    } else {
-      clearInterval(tickRef.current);
     }
 
     return () => {
       clearInterval(tickRef.current);
     };
-  }, [running]);
+  }, [running, onNext]);
 
   // useEffect(() => {
   //   if (!musicRef.current) {
@@ -94,7 +92,7 @@ export default function Timer({
             const sfx = new Audio(sfxUrl);
             sfx.currentTime = 0;
             sfx.volume = 0.2;
-            sfx.play().then(() => console.log("sfx played")).catch(err => console.error("sfx failed", err))
+            sfx.play();
           }}
         >
           {running ? (
