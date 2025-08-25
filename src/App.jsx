@@ -1,53 +1,87 @@
-import React, { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
-import playIcon from "./assets/icon_play.svg";
+import useLocalStorage from "./hooks/useLocalStorage";
 import Button from "./components/Button";
 import ButtonBase from "@mui/material/ButtonBase";
+import Timer from "./components/Timer";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [tab, setTab] = useLocalStorage("tab", 0);
+  const [focus, setFocus] = useLocalStorage("focus", 1);
+  const [shortBreak, setShortBreak] = useLocalStorage("shortBreak", 5);
+  const [longBreak, setLongBreak] = useLocalStorage("longBreak", 15);
+  const [intervals, setIntervals] = useLocalStorage("intervals", 4);
+  const [currentInterval, setCurrentInterval] = useLocalStorage(
+    "currentInterval",
+    1
+  );
+  const [notes, setNotes] = useLocalStorage("notes", "");
+  const [music, setMusic] = useLocalStorage("music", "off");
+  const [volume, setVolume] = useLocalStorage("volume", 0.5);
+  const [bgImage, setBgImage] = useLocalStorage("bgImage", "none");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const sfxRef = useRef(null);
+  const musicRef = useRef(null);
+
+  const durations = useMemo(
+    () => [
+      Math.max(1, Number(focus)) * 60,
+      Math.max(1, Number(shortBreak)) * 60,
+      Math.max(1, Number(longBreak)) * 60,
+    ],
+    [focus, shortBreak, longBreak]
+  );
+
+  useEffect(() => {
+    console.log("[App] mounted");  
+  }, []);
+  useEffect(() => {
+    console.log("[App] tab:", tab);  
+  }, [tab]);
+  useEffect(() => {
+    console.log("[App] intervals:", currentInterval, "/", intervals);  
+  }, [currentInterval, intervals]);
+  useEffect(() => {
+    console.log("[App] music:", music, "volume:", volume);  
+  }, [music, volume]);
+
+  const handleNext = () => {
+    console.log("[App] handleNext from tab", tab);
+    if (tab === 0) {
+      if (currentInterval >= intervals) {
+        setTab(2);
+        setCurrentInterval(1);
+      } else {
+        setTab(1);
+        setCurrentInterval((c) => c + 1);
+      }
+    } else {
+      setTab(0);
+    }
+  }
+
+  const handleRestart = (isRunning) => {
+    console.log("[App] restart requested. running:", isRunning);
+    if (isRunning && !window.confirm("Timer is running. Restart?")) {
+      return false;
+    }
+    return true;
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1 className="font-bold text-2xl">25:00</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <ButtonBase>Button Base</ButtonBase>
-        <Button
-          variant="contained"
-          size="large"
-          className="!ml-8 w-40"
-        >
-          <img src={playIcon} alt="" />
-          Play
-        </Button>
-        <Button
-          variant="contained"
-          size="large"
-          className="!ml-8"
-          startIcon={<img src={playIcon} alt="" />}
-        >
-          Test Button
-        </Button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Timer
+        key={`timer-${tab}-${durations[tab]}`}
+        modeIndex={tab}
+        durations={durations}
+        onNext={() => handleNext()}
+        onRestartRequest={(running) => handleRestart(running)}
+        sfxRef={sfxRef}
+        musicRef={musicRef}
+        musicKey={music}
+        musicVolume={volume}
+      />
     </>
   );
 }
