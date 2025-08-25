@@ -3,16 +3,14 @@ import Button from "./Button";
 import playIcon from "../assets/icon_play.svg";
 import pauseIcon from "../assets/icon_pause.svg";
 import restartIcon from "../assets/icon_restart.svg";
-import sfxUrl from "../assets/audio/nakime_biwa.mp3";
+import sfxUrl from "../assets/audio/nakime_biwa.m4a";
 
-const SFX_PATH = "../assets/audio/nakime_biwa.mp3";
 
 export default function Timer({
   modeIndex,
   durations,
   onNext,
   onRestartRequest,
-  sfxRef,
   musicRef,
   musicKey,
   musicVolume,
@@ -39,14 +37,6 @@ export default function Timer({
     setSeconds(durations[modeIndex]);
     setRunning(false);
   }, [modeIndex, durations]);
-
-  useEffect(() => {
-    if (!sfxRef.current) {
-        sfxRef.current = new Audio(SFX_PATH);
-        sfxRef.current.preload = "auto";
-        console.log("[Timer] sfx initialized", SFX_PATH);
-    }
-  }, [sfxRef])
   
   useEffect(() => {
     if (running) {
@@ -55,23 +45,6 @@ export default function Timer({
         setSeconds((s) => {
           if (s <= 1) {
             clearInterval(tickRef.current);
-            try {
-              if (!sfxRef.current) {
-                sfxRef.current = new Audio(SFX_PATH);
-                sfxRef.current.preload = "auto";
-              }
-              sfxRef.current.src = SFX_PATH;
-              sfxRef.current.currentTime = 0;
-              const playPromise = sfxRef.current.play();
-
-              if (playPromise && typeof playPromise.catch === "function") {
-                playPromise.catch((err) => console.error("[Timer] sfx play failed", err));
-              }
-              console.log("[Timer] sfx play triggered", sfxRef.current.src);
-              
-            } catch (err) {
-              console.error("[Timer] failed to play sfx", err);
-            }
             onNext();
             return 0;
           }
@@ -117,12 +90,13 @@ export default function Timer({
           onClick={() => {
             console.log("[Timer] toggle", !running);
             setRunning(!running);
+            
+            const sfx = new Audio(sfxUrl);
+            sfx.currentTime = 0;
+            sfx.volume = 0.2;
+            sfx.play().then(() => console.log("sfx played")).catch(err => console.error("sfx failed", err))
           }}
         >
-          {/* {if (running === true) {
-          "<img src={pauseIcon} alt="" />
-            Pause"
-        }} */}
           {running ? (
             <img src={pauseIcon} alt="" />
           ) : (

@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import useLocalStorage from "./hooks/useLocalStorage";
-import Button from "./components/Button";
-import ButtonBase from "@mui/material/ButtonBase";
 import Timer from "./components/Timer";
 
 function App() {
@@ -21,7 +19,6 @@ function App() {
   const [bgImage, setBgImage] = useLocalStorage("bgImage", "none");
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const sfxRef = useRef(null);
   const musicRef = useRef(null);
 
   const durations = useMemo(
@@ -49,12 +46,12 @@ function App() {
   const handleNext = () => {
     console.log("[App] handleNext from tab", tab);
     if (tab === 0) {
-      if (currentInterval >= intervals) {
+      if (currentInterval == intervals) {
         setTab(2);
         setCurrentInterval(1);
       } else {
         setTab(1);
-        setCurrentInterval((c) => c + 1);
+        setCurrentInterval(currentInterval + 1);
       }
     } else {
       setTab(0);
@@ -77,11 +74,11 @@ function App() {
         durations={durations}
         onNext={() => handleNext()}
         onRestartRequest={(running) => handleRestart(running)}
-        sfxRef={sfxRef}
         musicRef={musicRef}
         musicKey={music}
         musicVolume={volume}
       />
+      Interval: {currentInterval}/{intervals}
     </>
   );
 }
