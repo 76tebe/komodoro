@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import useLocalStorage from "./hooks/useLocalStorage";
 import Timer from "./components/Timer";
+import Notes from "./components/Notes";
 import sfxUrl from "./assets/audio/nakime_biwa.m4a";
 
 function App() {
@@ -89,7 +90,10 @@ function App() {
         musicKey={music}
         musicVolume={volume}
       />
+      <p>
       Interval: {currentInterval}/{intervals}
+      </p>
+      <Notes value={notes} onChange={setNotes} />
     </>
   );
 }
