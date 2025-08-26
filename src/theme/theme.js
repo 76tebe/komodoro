@@ -17,7 +17,17 @@ const theme = createTheme({
       textTransform: "none",
       fontWeight: 800,
     },
-  }
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 640,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+      xxl: 2000,
+    },
+  },
 });
 
 export default theme;

@@ -5,7 +5,6 @@ import pauseIcon from "../assets/icon_pause.svg";
 import restartIcon from "../assets/icon_restart.svg";
 import sfxUrl from "../assets/audio/nakime_biwa.m4a";
 
-
 export default function Timer({
   modeIndex,
   durations,
@@ -81,33 +80,43 @@ export default function Timer({
   }, [seconds]);
 
   return (
-    <div className="text-center my-8">
-      <div className="text-[10rem] font-bold mb-6">{formatTime}</div>
-      <div className="flex justify-center gap-4">
+    <div className="flex flex-col gap-8 text-center">
+      <div className="max-sm:text-9xl text-[10rem]/[1.2] font-bold mb-6">{formatTime}</div>
+      <div className="flex justify-center gap-6">
         <Button
           onClick={() => {
             console.log("[Timer] toggle", !running);
             setRunning(!running);
-            
+
             const sfx = new Audio(sfxUrl);
             sfx.currentTime = 0;
             sfx.volume = 0.2;
             sfx.play();
           }}
+          className="w-full"
         >
           {running ? (
-            <img src={pauseIcon} alt="" />
+            <>
+              <img src={pauseIcon} alt="" />
+              Pause
+            </>
           ) : (
-            <img src={playIcon} alt="" />
+            <>
+              <img src={playIcon} alt="" />
+              Start
+            </>
           )}
         </Button>
-        <Button iconOnly={true} onClick={() => {
+        <Button
+          iconOnly={true}
+          onClick={() => {
             console.log("[Timer] restart click");
             if (onRestartRequest(running)) {
-                setSeconds(durations[modeIndex]);
-                setRunning(false);
+              setSeconds(durations[modeIndex]);
+              setRunning(false);
             }
-        }} >
+          }}
+        >
           <img src={restartIcon} alt="" />
         </Button>
       </div>

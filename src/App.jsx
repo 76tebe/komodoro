@@ -4,6 +4,9 @@ import useLocalStorage from "./hooks/useLocalStorage";
 import Timer from "./components/Timer";
 import Notes from "./components/Notes";
 import sfxUrl from "./assets/audio/nakime_biwa.m4a";
+import Tabs from "@mui/material/Tabs";
+// import Tab from '@mui/material/Tab';
+import Tab from "./components/Tab";
 
 function App() {
   const [tab, setTab] = useLocalStorage("tab", 0);
@@ -34,16 +37,16 @@ function App() {
   );
 
   useEffect(() => {
-    console.log("[App] mounted");  
+    console.log("[App] mounted");
   }, []);
   useEffect(() => {
-    console.log("[App] tab:", tab);  
+    console.log("[App] tab:", tab);
   }, [tab]);
   useEffect(() => {
-    console.log("[App] intervals:", currentInterval, "/", intervals);  
+    console.log("[App] intervals:", currentInterval, "/", intervals);
   }, [currentInterval, intervals]);
   useEffect(() => {
-    console.log("[App] music:", music, "volume:", volume);  
+    console.log("[App] music:", music, "volume:", volume);
   }, [music, volume]);
 
   // issue: race condition. onNext -> setRunning(true) -> onNext
@@ -66,7 +69,7 @@ function App() {
     setTimeout(() => {
       setRunning(true);
     }, 0);
-  }
+  };
 
   const handleRestart = (isRunning) => {
     console.log("[App] restart requested. running:", isRunning);
@@ -74,27 +77,62 @@ function App() {
       return false;
     }
     return true;
-  }
+  };
 
   return (
-    <>
-      <Timer
-        key={`timer-${tab}-${durations[tab]}`}
-        modeIndex={tab}
-        durations={durations}
-        running={running}
-        setRunning={setRunning}
-        onNext={() => handleNext()}
-        onRestartRequest={(running) => handleRestart(running)}
-        musicRef={musicRef}
-        musicKey={music}
-        musicVolume={volume}
-      />
+    <div className="w-full max-w-[480px]">
+      <Tabs
+        value={tab}
+        onChange={(e, v) => {
+          console.log("[App] Change tab to", v);
+          setTab(v);
+          setRunning(false);
+        }}
+        variant="fullWidth"
+        textColor="inherit"
+        aria-label="Session"
+        scrollButtons={false}
+        allowScrollButtonsMobile
+        className="absolute top-0 w-full max-w-[480px]"
+        sx={{
+          overflow: "visible",
+          "& .MuiTabs-list": {
+            gap: {
+              xs: "16px",
+              sm: "24px",
+            },
+          },
+          "& .MuiTabs-scroller": {
+            overflow: "visible !important",
+          },
+          "& .MuiTabs-indicator": {
+            display: "none",
+          },
+        }}
+      >
+        <Tab label="Focus" />
+        <Tab label="Short Break" />
+        <Tab label="Long Break" />
+      </Tabs>
       <p>
-      Interval: {currentInterval}/{intervals}
+        Interval: {currentInterval}/{intervals}
       </p>
-      <Notes value={notes} onChange={setNotes} />
-    </>
+      <div className="flex flex-col gap-14">
+        <Timer
+          key={`timer-${tab}-${durations[tab]}`}
+          modeIndex={tab}
+          durations={durations}
+          running={running}
+          setRunning={setRunning}
+          onNext={() => handleNext()}
+          onRestartRequest={(running) => handleRestart(running)}
+          musicRef={musicRef}
+          musicKey={music}
+          musicVolume={volume}
+        />
+        <Notes value={notes} onChange={setNotes} />
+      </div>
+    </div>
   );
 }
 

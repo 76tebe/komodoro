@@ -14,7 +14,10 @@ export default function Button({ children, iconOnly = false, ...props }) {
         gap: "12px",
         backgroundColor: theme.palette.komodoro.bgPrimary,
         color: theme.palette.komodoro.accent,
-        fontSize: "1.5rem",
+        fontSize: {
+            xs: "1rem",
+            sm: "1.5rem",
+        },
         fontWeight: "700",
         lineHeight: "1.5",
         borderRadius: "0px",

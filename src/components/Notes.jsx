@@ -3,7 +3,7 @@ import theme from "../theme/theme";
 import { styled } from "@mui/material/styles";
 import { TextField } from "@mui/material";
 
-const StyledTextArea = styled(TextField)(({ theme }) => ({
+const StyledTextArea = styled(TextField)(() => ({
   position: "relative",
   width: "100%",
   padding: "12px 16px",
@@ -46,8 +46,10 @@ export default function Notes({ value, onChange }) {
       onChange={(e) => onChange(e.target.value)}
       sx={{
         "& .MuiInput-root": {
-          fontSize: "1.5rem",
-          lineHeight: "1.5",
+          fontSize: {
+            xs: "1rem",
+            sm: "1.5rem",
+          },
           "&:before, &:after": {
             border: "none",
           },
