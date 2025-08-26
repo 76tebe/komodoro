@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
+import { Analytics } from "@vercel/analytics/react";
 import useLocalStorage from "./hooks/useLocalStorage";
 import Timer from "./components/Timer";
 import Notes from "./components/Notes";
@@ -137,6 +138,7 @@ function App() {
         />
         <Notes value={notes} onChange={setNotes} />
       </div>
+      <Analytics />
     </div>
   );
 }
