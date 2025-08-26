@@ -5,7 +5,6 @@ import Timer from "./components/Timer";
 import Notes from "./components/Notes";
 import sfxUrl from "./assets/audio/nakime_biwa.m4a";
 import Tabs from "@mui/material/Tabs";
-// import Tab from '@mui/material/Tab';
 import Tab from "./components/Tab";
 
 function App() {
@@ -112,11 +111,17 @@ function App() {
       >
         <Tab label="Focus" />
         <Tab label="Short Break" />
-        <Tab label="Long Break" />
+        <Tab
+          label={
+            <div className="flex flex-col gap-1">
+              Long Break
+              <p className="text-sm">
+                {currentInterval}/{intervals}
+              </p>
+            </div>
+          }
+        />
       </Tabs>
-      <p>
-        Interval: {currentInterval}/{intervals}
-      </p>
       <div className="flex flex-col gap-14">
         <Timer
           key={`timer-${tab}-${durations[tab]}`}
